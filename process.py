@@ -15,8 +15,6 @@ def get_pending_hosts(read_url, read_key):
 
 
 def can_process_host(host):
-    print("Checking if we can process...")
-    print(host)
     return 'host_version' in host and 'installed_updates' in host
 
 
