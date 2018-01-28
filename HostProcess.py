@@ -27,7 +27,8 @@ def get_patches_for_ele(cfu_root, version_ele):
             'name': patch_ele.get('name-label'), 
             'description': patch_ele.get('name-description'),
             'uuid': patch_ele.get('uuid'),
-            'update_type': patch_ele.get('update-type')
+            'update_type': patch_ele.get('update-type'),
+            'url': patch_ele.get('patch-url')
         })
     
     return patches
