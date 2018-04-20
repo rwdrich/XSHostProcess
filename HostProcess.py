@@ -1,13 +1,15 @@
 import requests
 import xml.etree.ElementTree as ET
+from packaging import version
 
-
-def get_track(host_version):
-    if host_version.startswith('7.1'):
-        return 'CU'
+def get_track(host_version, cfu_root):
+    element = cfu_root.find('.serverversions/version[@value=\"%s\"]' % host_version)
+    if version.parse(host_version) < version.parse("7.1.0"):
+        return None
+    if "CR" in element.attrib['name']:
+        return "CR"
     else:
-        return 'CR'
-
+        return "CU"
 
 def get_cfu_content():
     citrix_update_url = "https://updates.xensource.com/XenServer/updates.xml"
@@ -55,10 +57,8 @@ def get_latest_server_version(cfu_root, track):
     # TODO: how is this latest/latestcr meant to work? For now, hacks
     if track=='CU':
         return None # Presented as an update instead
-
     else:
-        # Hardcode Falcon for now for demo purposes
-        return cfu_root.find('./serverversions/version[@value="7.2.0"]') 
+        return cfu_root.find('./serverversions/version[@latestcr="true"]') 
 
 def get_new_server_version(version_ele, current_version):
     new_server_version = {}
@@ -86,10 +86,9 @@ def get_new_version_patches(cfu_root, missing_patches):
 
 
 def get_available_updates(host_version, installed_updates):
-    track = get_track(host_version)
 
     cfu_root = get_cfu_content()
-    
+    track = get_track(host_version, cfu_root)
     results = {}
 
     results['current_version'] = host_version
