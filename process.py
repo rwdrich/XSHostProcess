@@ -42,6 +42,7 @@ def main():
     minutes = 5
     timeout = time.time() + 60*minutes
 
+    # While we haven't reached the timeout
     while(time.time() < timeout):
         process_pending_hosts(read_url, read_key, write_url, write_key)
         time.sleep(sleep_time)
