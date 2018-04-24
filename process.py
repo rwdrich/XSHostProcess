@@ -38,7 +38,11 @@ def main():
     read_key = credentials_config.get('apis', 'read_key')
     write_key = credentials_config.get('apis', 'write_key')
 
-    while(True):
+    # Adding a timeout
+    minutes = 5
+    timeout = time.time() + 60*minutes
+
+    while(time.time() < timeout):
         process_pending_hosts(read_url, read_key, write_url, write_key)
         time.sleep(sleep_time)
 
