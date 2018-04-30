@@ -19,20 +19,20 @@ def get_cfu_content():
 
 def get_patches_for_ele(cfu_root, version_ele):
     minimal_patch_eles = version_ele.findall('./minimalpatches/patch')
-    
+
     patches = []
     for minimal_patch_ele in minimal_patch_eles:
         uuid = minimal_patch_ele.get('uuid')
 
         patch_ele = cfu_root.find('./patches/patch[@uuid="%s"]' % uuid)
         patches.append({
-            'name': patch_ele.get('name-label'), 
+            'name': patch_ele.get('name-label'),
             'description': patch_ele.get('name-description'),
             'uuid': patch_ele.get('uuid'),
             'update_type': patch_ele.get('update-type'),
             'url': patch_ele.get('patch-url')
         })
-    
+
     return patches
 
 
@@ -40,7 +40,7 @@ def get_patches_for_version(cfu_root, version):
     version_ele = cfu_root.find('./serverversions/version[@value="%s"]' % version)
     if version_ele is None:
         return []
-    
+
     return get_patches_for_ele(cfu_root, version_ele)
 
 
@@ -56,9 +56,9 @@ def get_missing_patches(all_patches, installed_patches):
 def get_latest_server_version(cfu_root, track):
     # TODO: how is this latest/latestcr meant to work? For now, hacks
     if track=='CU':
-        return None # Presented as an update instead
+        return cfu_root.find('./serverversions/version[@latestcu="true"]') 
     else:
-        return cfu_root.find('./serverversions/version[@latestcr="true"]') 
+        return cfu_root.find('./serverversions/version[@latestcr="true"]')
 
 def get_new_server_version(version_ele, current_version):
     new_server_version = {}
@@ -69,6 +69,7 @@ def get_new_server_version(version_ele, current_version):
     if latest_server_version != current_version:
         new_server_version['name'] = version_ele.get('name')
         new_server_version['uuid'] = version_ele.get('uuid')
+        new_server_version['value'] = version_ele.get('value')
 
     return new_server_version
 
@@ -110,7 +111,7 @@ def get_available_updates(host_version, installed_updates):
     results['new_version_patches'] = new_version_patches
 
     return results
-  
+
 def populate_available_updates(host):
     print("Populating host " + host['host'])
     host_version = host['host_version']
@@ -119,5 +120,5 @@ def populate_available_updates(host):
 
     host.update(available_updates)
     host['pending'] = False
-    
+
     return host
