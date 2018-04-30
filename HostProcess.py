@@ -54,11 +54,7 @@ def get_missing_patches(all_patches, installed_patches):
 
 
 def get_latest_server_version(cfu_root, track):
-    # TODO: how is this latest/latestcr meant to work? For now, hacks
-    if track=='CU':
-        return cfu_root.find('./serverversions/version[@latestcu="true"]') 
-    else:
-        return cfu_root.find('./serverversions/version[@latestcr="true"]')
+    return cfu_root.find('./serverversions/version[@latest%s="true"]' % track.lower())
 
 def get_new_server_version(version_ele, current_version):
     new_server_version = {}
